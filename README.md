@@ -1,8 +1,9 @@
-# Introductory Haskell, bobkonf'17
+# Introductory Haskell, bobkonf'18
 
-These are the course materials for http://bobkonf.de/2017/fischmann.html.
+These are the course materials for http://bobkonf.de/2018/heinzel.html
 
-Based on earlier tutorials with Andres Löh, Alexander Ulrich.
+Based on last year's tutorial by Matthias Fischmann,
+which in turn was based on earlier tutorials with Andres Löh, Alexander Ulrich.
 
 
 ## Getting things running
