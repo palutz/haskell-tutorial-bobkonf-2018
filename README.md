@@ -5,18 +5,64 @@ These are the course materials for http://bobkonf.de/2018/heinzel.html
 Based on last year's tutorial by Matthias Fischmann,
 which in turn was based on earlier tutorials with Andres Löh, Alexander Ulrich.
 
+If you have any questions or technical problems,
+you can open an issue and I will try my best to help you!
 
-## Getting things running
+## Setting things up
 
-- open `Main.hs` from this repository in an editor (e.g., vim).
-- open a terminal window and enter `ghci Main.hs`.
-- try this:
+You will need the Glasgow Haskell Compiler (GHC).
+I recommend installing it through the build tool Stack,
+which can manage GHC and package installations for you.
+Please follow the
+[installation instructions on their website](https://docs.haskellstack.org/en/stable/install_and_upgrade/)!
+
+Then, check out this repository using `git`
+and install GHC through Stack.
+
+```
+git clone https://github.com/mheinzel/haskell-tutorial-bobkonf-2018.git
+cd haskell-haskell-tutorial-bobkonf-2018
+stack setup
+```
+
+This can take a few minutes.
+You should be able to start the interactive interpreter GHCi now (again, through Stack).
+
+```
+stack ghci
+...
+(some more info)
+...
+
+> 1 + 2
+3
+```
+
+Of course, you can install GHC any way you want to.
+As long as you can start GHCi, you're fine.
+If you are not a fan of the command line,
+there is the [Haskell Platform](https://www.haskell.org/platform/),
+which comes with WinGHCi, a graphical version of GHCi.
+
+
+## The workflow
+
+We want to explore Haskell by evaluating expressions in GHCi,
+but sometimes it's useful to define a few things in a text file.
+To try this, open the provided file Main.hs in GHCi.
+
+```
+stack ghci Main.hs
+```
+
+And use one of the things defined there.
 
 ```
 *Main> hellobobkonf
 seems like you're all set!
 ```
 
+To reload the file after changing something, type `:r` into GHCi.
 
 ## Basic data types
 
