@@ -565,16 +565,17 @@ Things to learn here:
 
 ## Library search and distribution
 
-- http://hayoo.fh-wedel.de/, https://www.haskell.org/hoogle/
-    - search for stuff in any library in different ways
-    - search for stuff in any library in different ways
+- http://hayoo.fh-wedel.de/, https://www.stackage.org/
+    - fuzzy-search for stuff by name or type signature
+    - Stackage only covers the packages provided in its snapshots,
+      but seems to provide better results than Hayoo
 
 - https://hackage.haskell.org/
     - package repository
 
 - http://www.stackage.org/
-    - started off as a version pinning tool.
-    - now the stack tool stack.
+    - provides snapshots of the most popular packages
+      that are guaranteed to build together
 
 
 ## Package management
@@ -582,92 +583,44 @@ Things to learn here:
 - cabal:
     - haskell package manager
     - powerful version dependency constraint solver
-    - hackage-security
 - stack:
-    - alternative to cabal, younger and more pragmatic.
+    - alternative to cabal, younger and more pragmatic
+    - uses stackage snapshots instead of finding compatible package versions using a solver
+    - manages compiler versions and dependencies without polluting the global namespace
 - both based on the Cabal library.
-
-
-## package.cabal
-
-~~~
-name:                gorbla
-version:             1.3.11
-synopsis:            gorbla isn't a real project, it's just a cabal file example.
-license:             AGPL-3
-license-file:        LICENSE
-author:              ...
-maintainer:          ...
-build-type:          Simple
-cabal-version:       >= 1.10
-
-library
-  exposed-modules:
-      Api
-    , DB.Core
-    ...
-  build-depends:
-      base >=4.7 && <4.8
-    , aeson >=0.7 && <0.8
-    , transformers ...
-    ...
-
-executable run-server
-  main-is:
-      Main.hs
-  build-depends:
-      base
-    , acid-state
-    , ...
-~~~
-
-
-## stack.yaml
-
-~~~
-resolver: lts-7.1
-
-packages:
-- '.'
-- location: '../prelude'
-- location:
-    git: https://github.com/bgamari/html-parse.git
-    commit: ebdd5fa3fa5a0d3c22602bec15059e821ad10ec4
-
-extra-deps:
-- react-flux-1.2.3
-- ...
-
-compiler: ghcjs-0.2.1.9007001_ghc-8.0.1
-compiler-check: match-exact
-
-setup-info:
-  ghcjs:
-    source:
-      ghcjs-0.2.1.9007001_ghc-8.0.1:
-        url: http://tolysz.org/ghcjs/ghc-8.0-2016-09-26-lts-7.1-9007001-mem.tar.gz
-        sha1: e640724883238593e2d2f7f03991cb413ec0347b
-~~~
 
 
 ## IDEs
 
 https://wiki.haskell.org/IDEs
 
+https://github.com/rainbyte/haskell-ide-chart
+
 
 ## Books
 
-- Good book with online material: http://www.cs.nott.ac.uk/~pszgmh/pih.html
-- Good online book: http://learnyouahaskell.com/
+- [Learn You a Haskell For Great Good](http://learnyouahaskell.com/)
+  - free online book
+  - not very in-depth
+  - almost no exercises
+- [Programming in Haskell](http://www.cs.nott.ac.uk/~pszgmh/pih.html)
+  - good book with online material
+- [Haskell Programming from First Principles](http://www.cs.nott.ac.uk/~pszgmh/pih.html)
+  - probably most up-to-date resource
+  - currently only provides digital copies, but there will be a printed version soon
+  - very extensive
+  - lots of exercises
 
 
 ## Learn more
 
 - http://stackoverflow.com/questions/tagged/haskell
 - http://www.reddit.com/r/haskell
+- https://github.com/sdiehl/wiwinwlh
 - https://ocharles.org.uk/blog
 - http://haskellcast.com/
 - irc: freenode \#haskell-beginners, \#haskell
+- Slack: https://fpchat-invite.herokuapp.com/
 - https://github.com/NicoleRauch/FunctionalProgrammingForBeginners
 
 
