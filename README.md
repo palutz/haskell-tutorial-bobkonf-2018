@@ -465,20 +465,52 @@ That's it.
 
 ## Higher Order Functions
 
-Another polymorphic function
+Functions that receive other functions as function arguments
+are called higher order functions.
+
+They are useful, for example for working with lists without
+writing recursive functions yourself.
 
 ~~~haskell
+-- apply a function to each element in a list and return the results
 map :: (a -> b) -> [a] -> [b]
 map f (x:xs) = f x : map f xs
 map _ []     = []
+
+-- can you guess how these functions work?
+filter :: (a -> Bool) -> [a] -> [a]
+zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
 ~~~
 
-Note also that this is a higher-order function.  It takes another
-function as an argument.
+They interact nicely with currying and partial application.
 
-~~~
-> map (elem 5) [[1..10], [2..4], []]
+~~~haskell
+> map greet ["paul", "vanessa", "daniele"]
 > map (+ 1) [1, 2, 3, 4, 5]
+~~~
+
+Another thing we can do is creating an operator that composes two functions
+by applying one to the result of the other. So it should hold:
+
+~~~haskell
+(f . g) x = f (g x)  -- note that the second function we get is applied first
+~~~
+
+Actually, that's already the implementation. Can you guess its type?
+
+~~~haskell
+> :t (.)
+(.) :: (b -> c) -> (a -> b) -> a -> c
+~~~
+
+That's a lot of type variables,
+but they tell you exactly what it is going to do.
+
+Now we can compose nice pipelines of functions.
+
+~~~
+> isLong = (> 4) . length
+> (map greet . filter isLong) ["anne", "lydia", "moe"]
 ~~~
 
 
