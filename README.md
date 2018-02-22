@@ -447,6 +447,24 @@ arguments must have *the same* element type.
 the type. Parametric polymorphism is a powerful way to write abstract
 and generic code.
 
+The more general the type of a function, the fewer things it can do.
+What can a function `f :: Int -> Int` do with its argument `x`?
+
+- `2 * x`
+- `(-1) ^ x`
+- `x + 1`
+- `x + 2`
+- ...
+
+What can a function `f :: a -> a` do with its arguments?
+
+- return it
+
+That's it.
+
+
+## Higher Order Functions
+
 Another polymorphic function
 
 ~~~haskell
