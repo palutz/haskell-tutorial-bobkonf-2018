@@ -409,13 +409,13 @@ containsFive = myElem 5
 Let's define a function that appends two lists of integers.
 
 ~~~haskell
-(++) :: [Int] -> [Int] -> [Int]
+myConcat :: [Int] -> [Int] -> [Int]
 
 -- Case 1: first argument is the empty list
-[] ++ ys     = ys
+myConcat [] ys     = ys
 
 -- Case 2: non-empty first argument.
-(x:xs) ++ ys = x : (xs ++ ys)
+myConcat (x:xs) ys = x : myConcat xs ys
 ~~~
 
 Do we use the fact that we append lists of *integers*
@@ -425,16 +425,16 @@ exactly the same (except in the type signature)?
 ==> Remove type signature
 
 ~~~
-["foo", "bar"] ++ ["baz"]
+myConcat ["foo", "bar"] ["baz"]
 ~~~
 
-What, then, is the type of `(++)`? Let's ask the compiler. For any
+What, then, is the type of `myConcat`? Let's ask the compiler. For any
 program, Haskell infers not only *some* type, but *the most general
 type*.
 
 ~~~
-:t (++)
-(++) :: [a] -> [a] -> [a]
+:t myConcat
+myConcat :: [a] -> [a] -> [a]
 ~~~
 
 Read this as: For *any element type* `a`, the function takes two lists
