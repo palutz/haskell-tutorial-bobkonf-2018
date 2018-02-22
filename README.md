@@ -170,6 +170,23 @@ You can also define your own operators, but don't go too far!
 ~~~haskell
 -- approximate equality
 x ~=~ y = abs (x - y) < 1
+
+-- my own `or`
+True  ||| _ = True
+False ||| r = r
+~~~
+
+Side note: An infix operator can be used as a regular function:
+
+~~~
+> (|||) True False
+~~~
+
+Additionally, any function with two arguments can be used as an infix
+operator by enclosing it in backticks.
+
+~~~
+> 5 `elem` [1, 2, 3, 5]
 ~~~
 
 Functions are first-class values - regular values that you
@@ -263,46 +280,6 @@ myElem x (y : ys) = x == y || myElem x ys
 ~~~
 > myElem 5 [6, 9, 42]
 > myElem 9 [6, 9, 42]
-~~~
-
-
-## Truth values
-
-Truth values are just a data type with two constructors:
-
-~~~
-> True
-> False
-~~~
-
-Define boolean functions by pattern-matching on those constructors. We
-define our own version of boolean that behaves exactly like the
-Haskell one. The `or`-operator is present in the standard library, but
-we define our own version.
-
-Haskell allows to define our own infix operators.
-
-~~~haskell
-True  || y = True
-False || y = y
-~~~
-
-~~~
-> True  || False
-> False || False
-~~~
-
-Side note: An infix operator can be used as a regular function:
-
-~~~
-> (||) True False
-~~~
-
-Additionally, any function with two arguments can be used as an infix
-operator by enclosing it in backticks.
-
-~~~
-> 5 `elem` [1, 2, 3, 5]
 ~~~
 
 
