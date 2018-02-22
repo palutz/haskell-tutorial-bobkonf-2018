@@ -64,52 +64,127 @@ seems like you're all set!
 
 To reload the file after changing something, type `:r` into GHCi.
 
-## Basic data types
-
-~~~
-> 42
-> 2.3
-> "foo"
-> 'x'
-> True
-> False
-> (42, "foo")
-~~~
-
-
 ## Basic Syntax
 
+Values of several types:
+
 ~~~haskell
--- A function named 'f' with one parameter
-greet you = "hey, " ++ you
-double x = x * 2
-
--- A function named 'g' with two parameters
-mul x y = x * y
-greetWith greeting you = greeting ++ ", " ++ you
+> 42
+> 2.3
+> "foo"  -- a string
+> 'x'    -- a single character
+> True
+> False
+> (42, "foo")  -- a tuple
 ~~~
 
-~~~
+~~~haskell
+-- There are the usual operators with expected precedence
+> 2 + 3 * 4 - 1
+> 5 / 2
+> "foobar" == "foo" ++ "bar"
 -- Function application is syntactically lightweight.
-> mul 42 (double 23)
+> length "haskell"
+-- but you need parentheses to show that `sqrt 5` is one argument,
+-- not `sqrt` and `5`.
+> round (sqrt 5)
 ~~~
 
 More forms of expressions:
 
-~~~
+~~~haskell
 -- let-bindings
 > let x = 5 in x + 42
 
 -- conditionals
 > if x == 5 then [42] else []
-
--- lambda expression
-> \x y -> x + y
 ~~~
 
-The last one is an *anonymous function* or *lambda
-expression*. Functions are first-class values - regular values that you
+You can define things in the interactive shell to use it later:
+
+~~~haskell
+> name = "matthias"
+> "hey, " ++ name
+~~~
+
+These are *definitions*, declarations that always hold true,
+not mutable variables.
+Statements such as `x = x + 1` do not make sense in this setting.
+
+Feel free to play around a bit!
+
+
+## Functions
+
+We can also define functions. Again, whitespace separates the arguments.
+
+I recommend defining them in a file so you will have them around later.
+Also, multi-line definitions in GHCi require some thought (hint: `:{` and `:}`).
+Don't forget to reload the file with `:r`!
+
+~~~haskell
+-- Functions with one parameter
+greet you = "hey, " ++ you
+absolute x = if x >= 0 then x else -x
+
+-- Functions with two parameters
+mul x y = x * y
+greetWith greeting you = greeting ++ ", " ++ you
+~~~
+
+You can also *pattern-match* on specific values.
+The cases will be tried top to bottom.
+
+~~~haskell
+boolToSlang True = "yep"
+boolToSlang False = "nope"
+
+isZero 0 = True
+isZero _ = False  -- underscore for arguments you don't care about
+~~~
+
+This is useful for defining recursive functions with a base case.
+
+~~~haskell
+factorial 0 = 1
+factorial n = n * factorial (n - 1)
+~~~
+
+Let's see how that would evaluate:
+
+~~~
+factorial 4                       ==
+4 * factorial 3                   ==
+4 * (3 * factorial 2)             ==
+4 * (3 * (2 * factorial 1))       ==
+4 * (3 * (2 * (1 * factorial 0))) ==
+4 * (3 * (2 * (1 * 1)))           ==
+4 * (3 * (2 * 1))                 ==
+4 * (3 * 2)                       ==
+4 * 6                             ==
+24
+~~~
+
+You can also define your own operators, but don't go too far!
+
+~~~haskell
+-- approximate equality
+x ~=~ y = abs (x - y) < 1
+~~~
+
+Functions are first-class values - regular values that you
 can pass around like any other.
+You can also create them on the fly.
+
+~~~haskell
+> (\word -> word ++ reverse word) "test"
+
+-- equivalent to `add x y = x + y`
+> add = (\x y -> x + y)
+> add 2 3
+~~~
+
+These are called *anonymous functions* or *lambda expressions*.
 
 
 ## Inductive list definition, list construction examples
