@@ -516,32 +516,74 @@ Now we can compose nice pipelines of functions.
 
 ## Data types
 
+### Sums and Products
+
 Haskell supports a powerful mechanism to define new data types:
 *algebraic data types* or *sums of products*.
 
-Simple example:
+*Product type*: one constructor that can contain multiple things
+(if you want named fields, there are *records*)
 
 ~~~haskell
+data Humanoid = Person String Int  -- name and age
+~~~
+
+~~~haskell
+> :t Person "Tom" 27
+Person "Tom" 27 :: Humanoid
+~~~
+
+*Sum type*: multiple constructors, "one of"
+
+~~~haskell
+data Bool = True | False   -- could just be an enumeration
+
+data Shape = Circle Float           -- radius
+           | Rectangle Float Float  -- width and height
+~~~
+
+~~~haskell
+> :t Circle 2.1
+Circle 2.1 :: Shape
+> :t Rectangle 3 4
+Rectangle 3 4 :: Shape
+~~~
+
+Data types can also be parametrized over a type variable (or multiple).
+
+~~~haskell
+-- Can contain a value of type `a` or not.
 data Maybe a = Just a | Nothing
-~~~
 
-~~~
-> Just 3
-> Nothing
-> [Just 3, Just False]
-> [Just 3, Nothing, Just 5]
+-- Useful for error handling.
+readBool :: String -> Maybe Bool
+readBool "True" = Just True
+readBool "False" = Just False
+readBool _ = Nothing
 ~~~
 
 ~~~haskell
+-- if you also want information with the other case
+-- e.g. an error reason/message
 data Either a b = Left a | Right b
 ~~~
 
-~~~
-> [Left 3, Right False]
+Let's revisit pattern matching. You can match on:
+
+- some literals (Numbers, Characters)
+- any constructors of data types (even nested ones!)
+
+~~~haskell
+withDefault :: a -> Maybe a -> a
+withDefault def Nothing = def  -- we need the default value
+withDefault _   (Just v) = v   -- is this branch, we don't
+
+shapeArea :: Shape -> Float
+shapeArea (Circle radius) = 3.14 * (radius ^ 2)
+shapeArea (Rectangle width height) = width * height
 ~~~
 
-(Both `Maybe` and `Either` are `Monad`s.  Enough said.  :-)
-
+Data types can also be recursive.
 Let's define a data type for binary trees with node labels of *some
 type*. The type gets a *type parameter*.
 
@@ -589,7 +631,7 @@ t = Node
            24
            Leaf)
 
-sumTree t
+> sumTree t
 ~~~
 
 We can interpret binary trees as *search trees*. Write a function that
