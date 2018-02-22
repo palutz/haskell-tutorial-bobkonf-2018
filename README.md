@@ -768,6 +768,44 @@ if' :: Boolsy c => c -> a -> a -> a
 if' c thn els = if boolsy c then thn els
 ~~~
 
+### Deriving Class Instances
+
+We need type class instances for many things,
+even just showing a value on the console.
+
+~~~haskell
+data Shape = Circle Float
+           | Rectangle Float Float
+~~~
+
+~~~haskell
+> Circle 2
+<interactive>:3:1: error:
+    • No instance for (Show Shape) arising from a use of ‘print’
+
+> Rectangle 2 3 == Circle 4
+<interactive>:3:1: error:
+    • No instance for (Eq Shape) arising from a use of ‘==’
+~~~
+
+We need instances for `Show Shape` and `Eq Shape`.
+Fortunately, we just need a line.
+
+~~~haskell
+data Shape = Circle Float
+           | Rectangle Float Float
+           deriving (Eq, Show)
+~~~
+
+For some type classes, the compiler knows how to create instances
+automatically.
+
+### Code Reuse
+
+By implementing a few type classes, we get access to a lot of existing
+functionality for our data type.
+
+
 ## Holes
 
 In Haskell, the expressive type system allows to specify interesting
