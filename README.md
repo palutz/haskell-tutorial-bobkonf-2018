@@ -806,6 +806,49 @@ By implementing a few type classes, we get access to a lot of existing
 functionality for our data type.
 
 
+## Some Common Abstractions
+
+How can we formalize mathematical structures?
+
+We need:
+- one or more types
+- some operations working on them
+- laws about their behavior
+
+The laws might not sound as important at first
+and can usually not be checked by the compiler
+(so you have to make sure you don't break them when writing an instance).
+But they allow to make reasonable assumptions about the instances
+without constraining to them too much.
+
+### Monoid
+
+A monoid is a set (or type, in this case), equipped with:
+- an associative, binary operation on it
+- a neutral element
+
+We define the type class as follows:
+
+~~~haskell
+class Monoid m where
+    mappend :: m -> m -> m  -- binary operation
+    mempty :: m             -- a special element
+~~~
+
+and require for all `x`, `y` and `z`:
+
+~~~haskell
+mappend x (mappend y z) == mappend (mappend x y) z  -- associative
+mappend mempty x == mappend x mempty == x           -- neutral
+~~~
+
+You can see some instances in GHCi using `:info Monoid`.
+
+### Functor
+
+TODO
+
+
 ## Holes
 
 In Haskell, the expressive type system allows to specify interesting
