@@ -220,7 +220,6 @@ using the cons `(:)` operator.
 
 ## Functions on lists
 
-
 ### list length
 
 *Deconstruct* the list according to its inductive definition by
@@ -228,16 +227,18 @@ using the cons `(:)` operator.
  value and some other list. Treat the cases separately!
 
 ~~~haskell
-length []        = 0
-length (hd : tl) = 1 + length tl
+-- The empty list has length 0
+myLength []        = 0
+-- A list is one longer than its tail
+myLength (hd : tl) = 1 + myLength tl
 ~~~
 
 ~~~
-length [1..3]           ==
-length (1 : 2 : 3 : []) ==
-1 + length (2 : 3 : []) ==
-1 + 1 + length (3 : []) ==
-1 + 1 + 1 + length ([]) ==
+myLength [1..3]           ==
+myLength (1 : 2 : 3 : []) ==
+1 + myLength (2 : 3 : []) ==
+1 + 1 + myLength (3 : []) ==
+1 + 1 + 1 + myLength ([]) ==
 1 + 1 + 1 + 0           ==
 3
 ~~~
@@ -248,21 +249,20 @@ length (1 : 2 : 3 : []) ==
 * **boolean or: short-cut evaluation**
 * In Haskell, all bindings are mutually recursive by default
 
-
 ### list membership
 
 ~~~haskell
 -- Any value is certainly not an element of the empty list
-elem x [] = False
+myElem _ [] = False
 
 -- Check wether the head value equals 'x' or if 'x' occurs
 -- in the tail of the list.
-elem x (y : ys) = x == y || elem x ys
+myElem x (y : ys) = x == y || myElem x ys
 ~~~
 
 ~~~
-> elem 5 [6, 9, 42]
-> elem 9 [6, 9, 42]
+> myElem 5 [6, 9, 42]
+> myElem 9 [6, 9, 42]
 ~~~
 
 
@@ -401,16 +401,16 @@ It takes two bools and produces a bool:
 (||) :: Bool -> (Bool -> Bool)
 ~~~
 
-Let's return to our `elem` function. We can give its type as follows:
+Let's return to our `myElem` function. We can give its type as follows:
 
 ~~~haskell
-elem :: Int -> [Int] -> Bool
+myElem :: Int -> [Int] -> Bool
 
 -- But actually, it's this type:
-elem :: Int -> ([Int] -> Bool)
+myElem :: Int -> ([Int] -> Bool)
 ~~~
 
-What is the type of `elem 5`?
+What is the type of `myElem 5`?
 
 Functions with more than one parameter can be *partially
 applied*. Partial application specializes (or fixes) a function on
@@ -418,7 +418,7 @@ some parameters.
 
 ~~~haskell
 containsFive :: [Int] -> Bool
-containsFive = elem 5
+containsFive = myElem 5
 ~~~
 
 ~~~
