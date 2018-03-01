@@ -64,52 +64,144 @@ seems like you're all set!
 
 To reload the file after changing something, type `:r` into GHCi.
 
-## Basic data types
-
-~~~
-> 42
-> 2.3
-> "foo"
-> 'x'
-> True
-> False
-> (42, "foo")
-~~~
-
-
 ## Basic Syntax
 
+Values of several types:
+
 ~~~haskell
--- A function named 'f' with one parameter
-greet you = "hey, " ++ you
-double x = x * 2
-
--- A function named 'g' with two parameters
-mul x y = x * y
-greetWith greeting you = greeting ++ ", " ++ you
+> 42
+> 2.3
+> "foo"  -- a string
+> 'x'    -- a single character
+> True
+> False
+> (42, "foo")  -- a tuple
 ~~~
 
-~~~
+~~~haskell
+-- There are the usual operators with expected precedence
+> 2 + 3 * 4 - 1
+> 5 / 2
+> "foobar" == "foo" ++ "bar"
 -- Function application is syntactically lightweight.
-> mul 42 (double 23)
+> length "haskell"
+-- but you need parentheses to show that `sqrt 5` is one argument,
+-- not `sqrt` and `5`.
+> round (sqrt 5)
 ~~~
 
 More forms of expressions:
 
-~~~
+~~~haskell
 -- let-bindings
 > let x = 5 in x + 42
 
 -- conditionals
 > if x == 5 then [42] else []
-
--- lambda expression
-> \x y -> x + y
 ~~~
 
-The last one is an *anonymous function* or *lambda
-expression*. Functions are first-class values - regular values that you
+You can define things in the interactive shell to use it later:
+
+~~~haskell
+> name = "matthias"
+> "hey, " ++ name
+~~~
+
+These are *definitions*, declarations that always hold true,
+not mutable variables.
+Statements such as `x = x + 1` do not make sense in this setting.
+
+Feel free to play around a bit!
+
+
+## Functions
+
+We can also define functions. Again, whitespace separates the arguments.
+
+I recommend defining them in a file so you will have them around later.
+Also, multi-line definitions in GHCi require some thought (hint: `:{` and `:}`).
+Don't forget to reload the file with `:r`!
+
+~~~haskell
+-- Functions with one parameter
+greet you = "hey, " ++ you
+absolute x = if x >= 0 then x else -x
+
+-- Functions with two parameters
+mul x y = x * y
+greetWith greeting you = greeting ++ ", " ++ you
+~~~
+
+You can also *pattern-match* on specific values.
+The cases will be tried top to bottom.
+
+~~~haskell
+boolToSlang True = "yep"
+boolToSlang False = "nope"
+
+isZero 0 = True
+isZero _ = False  -- underscore for arguments you don't care about
+~~~
+
+This is useful for defining recursive functions with a base case.
+
+~~~haskell
+factorial 0 = 1
+factorial n = n * factorial (n - 1)
+~~~
+
+Let's see how that would evaluate:
+
+~~~
+factorial 4                       ==
+4 * factorial 3                   ==
+4 * (3 * factorial 2)             ==
+4 * (3 * (2 * factorial 1))       ==
+4 * (3 * (2 * (1 * factorial 0))) ==
+4 * (3 * (2 * (1 * 1)))           ==
+4 * (3 * (2 * 1))                 ==
+4 * (3 * 2)                       ==
+4 * 6                             ==
+24
+~~~
+
+You can also define your own operators, but don't go too far!
+
+~~~haskell
+-- approximate equality
+x ~=~ y = abs (x - y) < 1
+
+-- my own `or`
+True  ||| _ = True
+False ||| r = r
+~~~
+
+Side note: An infix operator can be used as a regular function:
+
+~~~
+> (|||) True False
+~~~
+
+Additionally, any function with two arguments can be used as an infix
+operator by enclosing it in backticks.
+
+~~~
+> 5 `elem` [1, 2, 3, 5]
+~~~
+
+Functions are first-class values - regular values that you
 can pass around like any other.
+You can also create them on the fly.
+
+~~~haskell
+> (\word -> word ++ reverse word) "test"
+
+-- equivalent to `add x y = x + y`
+> add = (\x y -> x + y)
+> add 2 3
+~~~
+
+These are called *anonymous functions* or *lambda expressions*.
 
 
 ## Inductive list definition, list construction examples
@@ -145,7 +237,6 @@ using the cons `(:)` operator.
 
 ## Functions on lists
 
-
 ### list length
 
 *Deconstruct* the list according to its inductive definition by
@@ -153,16 +244,18 @@ using the cons `(:)` operator.
  value and some other list. Treat the cases separately!
 
 ~~~haskell
-length []        = 0
-length (hd : tl) = 1 + length tl
+-- The empty list has length 0
+myLength []        = 0
+-- A list is one longer than its tail
+myLength (hd : tl) = 1 + myLength tl
 ~~~
 
 ~~~
-length [1..3]           ==
-length (1 : 2 : 3 : []) ==
-1 + length (2 : 3 : []) ==
-1 + 1 + length (3 : []) ==
-1 + 1 + 1 + length ([]) ==
+myLength [1..3]           ==
+myLength (1 : 2 : 3 : []) ==
+1 + myLength (2 : 3 : []) ==
+1 + 1 + myLength (3 : []) ==
+1 + 1 + 1 + myLength ([]) ==
 1 + 1 + 1 + 0           ==
 3
 ~~~
@@ -173,61 +266,20 @@ length (1 : 2 : 3 : []) ==
 * **boolean or: short-cut evaluation**
 * In Haskell, all bindings are mutually recursive by default
 
-
 ### list membership
 
 ~~~haskell
 -- Any value is certainly not an element of the empty list
-elem x [] = False
+myElem _ [] = False
 
 -- Check wether the head value equals 'x' or if 'x' occurs
 -- in the tail of the list.
-elem x (y : ys) = x == y || elem x ys
+myElem x (y : ys) = x == y || myElem x ys
 ~~~
 
 ~~~
-> elem 5 [6, 9, 42]
-> elem 9 [6, 9, 42]
-~~~
-
-
-## Truth values
-
-Truth values are just a data type with two constructors:
-
-~~~
-> True
-> False
-~~~
-
-Define boolean functions by pattern-matching on those constructors. We
-define our own version of boolean that behaves exactly like the
-Haskell one. The `or`-operator is present in the standard library, but
-we define our own version.
-
-Haskell allows to define our own infix operators.
-
-~~~haskell
-True  || y = True
-False || y = y
-~~~
-
-~~~
-> True  || False
-> False || False
-~~~
-
-Side note: An infix operator can be used as a regular function:
-
-~~~
-> (||) True False
-~~~
-
-Additionally, any function with two arguments can be used as an infix
-operator by enclosing it in backticks.
-
-~~~
-> 5 `elem` [1, 2, 3, 5]
+> myElem 5 [6, 9, 42]
+> myElem 9 [6, 9, 42]
 ~~~
 
 
@@ -326,16 +378,16 @@ It takes two bools and produces a bool:
 (||) :: Bool -> (Bool -> Bool)
 ~~~
 
-Let's return to our `elem` function. We can give its type as follows:
+Let's return to our `myElem` function. We can give its type as follows:
 
 ~~~haskell
-elem :: Int -> [Int] -> Bool
+myElem :: Int -> [Int] -> Bool
 
 -- But actually, it's this type:
-elem :: Int -> ([Int] -> Bool)
+myElem :: Int -> ([Int] -> Bool)
 ~~~
 
-What is the type of `elem 5`?
+What is the type of `myElem 5`?
 
 Functions with more than one parameter can be *partially
 applied*. Partial application specializes (or fixes) a function on
@@ -343,7 +395,7 @@ some parameters.
 
 ~~~haskell
 containsFive :: [Int] -> Bool
-containsFive = elem 5
+containsFive = myElem 5
 ~~~
 
 ~~~
@@ -357,13 +409,13 @@ containsFive = elem 5
 Let's define a function that appends two lists of integers.
 
 ~~~haskell
-(++) :: [Int] -> [Int] -> [Int]
+myConcat :: [Int] -> [Int] -> [Int]
 
 -- Case 1: first argument is the empty list
-[] ++ ys     = ys
+myConcat [] ys     = ys
 
 -- Case 2: non-empty first argument.
-(x:xs) ++ ys = x : (xs ++ ys)
+myConcat (x:xs) ys = x : myConcat xs ys
 ~~~
 
 Do we use the fact that we append lists of *integers*
@@ -373,16 +425,16 @@ exactly the same (except in the type signature)?
 ==> Remove type signature
 
 ~~~
-["foo", "bar"] ++ ["baz"]
+myConcat ["foo", "bar"] ["baz"]
 ~~~
 
-What, then, is the type of `(++)`? Let's ask the compiler. For any
+What, then, is the type of `myConcat`? Let's ask the compiler. For any
 program, Haskell infers not only *some* type, but *the most general
 type*.
 
 ~~~
-:t (++)
-(++) :: [a] -> [a] -> [a]
+:t myConcat
+myConcat :: [a] -> [a] -> [a]
 ~~~
 
 Read this as: For *any element type* `a`, the function takes two lists
@@ -395,51 +447,143 @@ arguments must have *the same* element type.
 the type. Parametric polymorphism is a powerful way to write abstract
 and generic code.
 
-Another polymorphic function
+The more general the type of a function, the fewer things it can do.
+What can a function `f :: Int -> Int` do with its argument `x`?
+
+- `2 * x`
+- `(-1) ^ x`
+- `x + 1`
+- `x + 2`
+- ...
+
+What can a function `f :: a -> a` do with its arguments?
+
+- return it
+
+That's it.
+
+
+## Higher Order Functions
+
+Functions that receive other functions as function arguments
+are called higher order functions.
+
+They are useful, for example for working with lists without
+writing recursive functions yourself.
 
 ~~~haskell
+-- apply a function to each element in a list and return the results
 map :: (a -> b) -> [a] -> [b]
 map f (x:xs) = f x : map f xs
 map _ []     = []
+
+-- can you guess how these functions work?
+filter :: (a -> Bool) -> [a] -> [a]
+zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
 ~~~
 
-Note also that this is a higher-order function.  It takes another
-function as an argument.
+They interact nicely with currying and partial application.
 
-~~~
-> map (elem 5) [[1..10], [2..4], []]
+~~~haskell
+> map greet ["paul", "vanessa", "daniele"]
 > map (+ 1) [1, 2, 3, 4, 5]
+~~~
+
+Another thing we can do is creating an operator that composes two functions
+by applying one to the result of the other. So it should hold:
+
+~~~haskell
+(f . g) x = f (g x)  -- note that the second function we get is applied first
+~~~
+
+Actually, that's already the implementation. Can you guess its type?
+
+~~~haskell
+> :t (.)
+(.) :: (b -> c) -> (a -> b) -> a -> c
+~~~
+
+That's a lot of type variables,
+but they tell you exactly what it is going to do.
+
+Now we can compose nice pipelines of functions.
+
+~~~
+> isLong = (> 4) . length
+> (map greet . filter isLong) ["anne", "lydia", "moe"]
 ~~~
 
 
 ## Data types
 
+### Sums and Products
+
 Haskell supports a powerful mechanism to define new data types:
 *algebraic data types* or *sums of products*.
 
-Simple example:
+*Product type*: one constructor that can contain multiple things
+(if you want named fields, there are *records*)
 
 ~~~haskell
+data Humanoid = Person String Int  -- name and age
+~~~
+
+~~~haskell
+> :t Person "Tom" 27
+Person "Tom" 27 :: Humanoid
+~~~
+
+*Sum type*: multiple constructors, "one of"
+
+~~~haskell
+data Bool = True | False   -- could just be an enumeration
+
+data Shape = Circle Float           -- radius
+           | Rectangle Float Float  -- width and height
+~~~
+
+~~~haskell
+> :t Circle 2.1
+Circle 2.1 :: Shape
+> :t Rectangle 3 4
+Rectangle 3 4 :: Shape
+~~~
+
+Data types can also be parametrized over a type variable (or multiple).
+
+~~~haskell
+-- Can contain a value of type `a` or not.
 data Maybe a = Just a | Nothing
-~~~
 
-~~~
-> Just 3
-> Nothing
-> [Just 3, Just False]
-> [Just 3, Nothing, Just 5]
+-- Useful for error handling.
+readBool :: String -> Maybe Bool
+readBool "True" = Just True
+readBool "False" = Just False
+readBool _ = Nothing
 ~~~
 
 ~~~haskell
+-- if you also want information with the other case
+-- e.g. an error reason/message
 data Either a b = Left a | Right b
 ~~~
 
-~~~
-> [Left 3, Right False]
+Let's revisit pattern matching. You can match on:
+
+- some literals (Numbers, Characters)
+- any constructors of data types (even nested ones!)
+
+~~~haskell
+withDefault :: a -> Maybe a -> a
+withDefault def Nothing = def  -- we need the default value
+withDefault _   (Just v) = v   -- is this branch, we don't
+
+shapeArea :: Shape -> Float
+shapeArea (Circle radius) = 3.14 * (radius ^ 2)
+shapeArea (Rectangle width height) = width * height
 ~~~
 
-(Both `Maybe` and `Either` are `Monad`s.  Enough said.  :-)
-
+Data types can also be recursive.
 Let's define a data type for binary trees with node labels of *some
 type*. The type gets a *type parameter*.
 
@@ -487,7 +631,7 @@ t = Node
            24
            Leaf)
 
-sumTree t
+> sumTree t
 ~~~
 
 We can interpret binary trees as *search trees*. Write a function that
@@ -535,6 +679,174 @@ Main entry point of every program:
 main :: IO ()
 main = putStrLn "hello, world"
 ```
+
+
+## Type Classes: Ad-hoc overloading
+
+If a type contains a type variable, the function behaves the same for
+all types. In other words: we can not assume anything about the
+type. In a lot of cases, we do not want to handle all types, but only
+those that support certain operations.
+
+What is the most general type of our `elem` function? More than just
+integers. But can it handle *all* types?
+
+~~~
+:t elem
+elem :: Eq a => a -> [a] -> Bool
+~~~
+
+`elem` can handle all types of list elements that support equality.
+
+Types that support equality are in the *type class* `Eq`. The type of
+`elem` contains a *class constraint*.
+
+Read: For all types `a` that support equality...
+
+Type class: a collection of types that support common functionality.
+
+The comparison operator is actually a *method* of the type class `Eq`.
+
+~~~
+> :t (==)
+-- Accepts any type that is an instance of Eq
+
+> :info Eq
+~~~
+
+Haskell brings a number of standard type classes. Defining your own
+type classes in a Haskell program is very common.
+
+~~~
+> :i Ord
+> :i Show
+> show 3
+> show "4"
+> import Data.Aeson
+> :info ToJSON
+> :info FromJSON
+~~~
+
+### Class and Instance Definitions
+
+Assume you are unhappy with the fact that you can't write:
+
+~~~
+if 0 then ... else ...
+~~~
+
+because `0` is an `Int`, not a boolean.
+
+This is arguably a bad idea in the first place, and you really want to
+just have booleans in conditions.
+
+But if you must do it, type classes can help you.
+
+~~~
+class Boolsy a where
+    boolsy :: a -> Bool
+~~~
+
+~~~
+if boolsy 0 then ...
+if boolsy "" then ...
+if boolsy False then ...
+~~~
+
+~~~
+instance Boolsy Bool where
+    boolsy True  = True
+    boolsy False = False
+
+instance Boolsy Int where
+    boolsy 0 = False
+    boolsy _ = True
+~~~
+
+~~~
+if' :: Boolsy c => c -> a -> a -> a
+if' c thn els = if boolsy c then thn els
+~~~
+
+### Deriving Class Instances
+
+We need type class instances for many things,
+even just showing a value on the console.
+
+~~~haskell
+data Shape = Circle Float
+           | Rectangle Float Float
+~~~
+
+~~~haskell
+> Circle 2
+<interactive>:3:1: error:
+    • No instance for (Show Shape) arising from a use of ‘print’
+
+> Rectangle 2 3 == Circle 4
+<interactive>:3:1: error:
+    • No instance for (Eq Shape) arising from a use of ‘==’
+~~~
+
+We need instances for `Show Shape` and `Eq Shape`.
+Fortunately, we just need a line.
+
+~~~haskell
+data Shape = Circle Float
+           | Rectangle Float Float
+           deriving (Eq, Show)
+~~~
+
+For some type classes, the compiler knows how to create instances
+automatically.
+
+### Code Reuse
+
+By implementing a few type classes, we get access to a lot of existing
+functionality for our data type.
+
+
+## Some Common Abstractions
+
+How can we formalize mathematical structures?
+
+We need:
+- one or more types
+- some operations working on them
+- laws about their behavior
+
+The laws might not sound as important at first
+and can usually not be checked by the compiler
+(so you have to make sure you don't break them when writing an instance).
+But they allow to make reasonable assumptions about the instances
+without constraining to them too much.
+
+### Monoid
+
+A monoid is a set (or type, in this case), equipped with:
+- an associative, binary operation on it
+- a neutral element
+
+We define the type class as follows:
+
+~~~haskell
+class Monoid m where
+    mappend :: m -> m -> m  -- binary operation
+    mempty :: m             -- a special element
+~~~
+
+and require for all `x`, `y` and `z`:
+
+~~~haskell
+mappend x (mappend y z) == mappend (mappend x y) z  -- associative
+mappend mempty x == mappend x mempty == x           -- neutral
+~~~
+
+You can see some instances in GHCi using `:info Monoid`.
+
+### Functor
+
+TODO
 
 
 ## Holes
