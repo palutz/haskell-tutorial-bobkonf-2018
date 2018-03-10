@@ -151,4 +151,6 @@ data Tree a = Leaf a
 -- :t Node ---> Tree a -> a -> Tree a -> Tree a
 -- type constructor are just functions, like any other functions
 
-
+sumTree ::  Tree Int -> Int
+sumTree Leaf a = a
+sumTree (Node t1 b t2) = (sumTree t1) + a + (sumTree t2)
