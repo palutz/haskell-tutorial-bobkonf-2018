@@ -151,6 +151,56 @@ data Tree a = Leaf a
 -- :t Node ---> Tree a -> a -> Tree a -> Tree a
 -- type constructor are just functions, like any other functions
 
-sumTree ::  Tree Int -> Int
-sumTree Leaf a = a
-sumTree (Node t1 b t2) = (sumTree t1) + a + (sumTree t2)
+sumTree :: Tree Int -> Int
+sumTree (Leaf a) = a
+sumTree (Node (t1) x (t2)) = (sumTree t1) + x + (sumTree t2)
+
+
+elemTree :: Ord a => a -> Tree a -> Bool
+elemTree x (Leaf y) = x == y
+elemtTree x (Node (t1) y (t2)) = 
+  if x == y then True else 
+  if x < y then elemTree x t1 else 
+                elemTree x t2
+
+
+class MyBool a where
+  myBool :: a -> Bool
+
+instance MyBool Bool where 
+  myBool True = True
+  myBool False = False
+
+instance MyBool Num where
+  myBool (Num 0) = False
+  myBool _ = True
+
+
+class Boolsy a where
+  boolsy :: a -> Bool 
+
+instance Boolsy Bool where 
+  boolsy True = True
+  boolsy False = False
+
+-- to work we need to force a Int not a Num
+-- so it will be 
+-- a :: Int
+-- a = 0 
+-- if boolsy a then ...
+instance Boolsy Int where 
+  boolsy 0 = False
+  boolsy _ = True
+
+-- if' 1 "this is the then" "this is hte else"
+if' :: Boolsy c => c -> a -> a -> a
+if' c thn els = if boolsy c then thn else els
+
+-- example of deriving type classes
+data Shape2 = Circle2 Float
+            | Rectangle2 Float Float
+            deriving (Eq, Show)
+
+class Monoid m where
+  mappend :: m -> m -> m
+  mempty :: m
